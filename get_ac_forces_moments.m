@@ -38,9 +38,9 @@ D = (-CD0-abs(CDA*alpha))*q_bar*S;
 Y = (CYB*beta)*q_bar*S;
 L = (-CL0-CLA*alpha)*q_bar*S;
 
-% stab2body = [cos(alpha), 0, -sin(alpha); 0, 1, 0; sin(alpha), 0, cos(alpha)];
-% F_aero = stab2body*[D, Y, L]';
-F_aero = [D, Y, L]';
+stab2body = [cos(alpha), 0, -sin(alpha); 0, 1, 0; sin(alpha), 0, cos(alpha)];
+F_aero = stab2body*[D, Y, L]'; %comment out for auto-differentiation
+% F_aero = [D, Y, L]';%use for auto-differentiation
 
 %gravity
 F_grav = dcm*gravity'*m;
@@ -49,8 +49,8 @@ F_grav = dcm*gravity'*m;
 ML = (ClP*p+ClDa*da)*q_bar*span*S;
 MM = (CmA*alpha+CmQ*q+CmDe*de)*q_bar*chord*S;
 MN = (Cn0+CnB*beta+CnR*r+CnDr*dr)*q_bar*span*S;
-% M_aero = stab2body*[ML, MM, MN]';
-M_aero = [ML, MM, MN]';
+M_aero = stab2body*[ML, MM, MN]'; %comment out for auto-differentiation
+% M_aero = [ML, MM, MN]'; %use for auto-differentiation
 
 %moment mod
 XYZ_body = dcm*[x, y, z]';
