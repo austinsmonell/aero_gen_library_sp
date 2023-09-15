@@ -1,5 +1,5 @@
-function [t, y_out] = run_sim_states(Tstop, ac1_state, ac2_state, gen_state, ctr1, ctr2, param)
-addpath('../aero_gen_library/');
+function [t, y_out] = run_sim_states(Tstop, ac1_state,ctr1, param)
+addpath('../aero_gen_library_sp/');
 
 % Discrete
 % time = 0:Ts:Tstop;
@@ -14,8 +14,8 @@ addpath('../aero_gen_library/');
 
 %Continous
 tspan = [0, Tstop];
-y0 = [ac1_state, ac2_state, gen_state];
-u0 = [ctr1, ctr2];
+y0 = [ac1_state];
+u0 = [ctr1];
 [t, y_out] = ode45(@(t, y_in) get_full_state(y_in, u0, param), tspan, y0);
 
 

@@ -15,10 +15,10 @@ wind = [param(9), param(10), param(11)]';
 roll_k = param(15);pitch_k = param(16);
 
 %intermediate variables
-dcm = eul2rotm([psi, theta, phi])';
+dcm = eul2rotmat([psi, theta, phi])';
 wind_body = dcm*wind;
 v_a_vec = [u, v, w]'-wind_body;
-v_a = norm(v_a_vec);
+v_a = sqrt(v_a_vec(1)^2+v_a_vec(2)^2+v_a_vec(3)^2);
 q_bar = 0.5*rho*v_a^2;
 alpha = atan2(v_a_vec(3), v_a_vec(1));
 beta = asin(v_a_vec(2)/v_a);
@@ -38,8 +38,9 @@ D = (-CD0-abs(CDA*alpha))*q_bar*S;
 Y = (CYB*beta)*q_bar*S;
 L = (-CL0-CLA*alpha)*q_bar*S;
 
-stab2body = [cos(alpha), 0, -sin(alpha); 0, 1, 0; sin(alpha), 0, cos(alpha)];
-F_aero = stab2body*[D, Y, L]';
+% stab2body = [cos(alpha), 0, -sin(alpha); 0, 1, 0; sin(alpha), 0, cos(alpha)];
+% F_aero = stab2body*[D, Y, L]';
+F_aero = [D, Y, L]';
 
 %gravity
 F_grav = dcm*gravity'*m;
@@ -48,7 +49,8 @@ F_grav = dcm*gravity'*m;
 ML = (ClP*p+ClDa*da)*q_bar*span*S;
 MM = (CmA*alpha+CmQ*q+CmDe*de)*q_bar*chord*S;
 MN = (Cn0+CnB*beta+CnR*r+CnDr*dr)*q_bar*span*S;
-M_aero = stab2body*[ML, MM, MN]';
+% M_aero = stab2body*[ML, MM, MN]';
+M_aero = [ML, MM, MN]';
 
 %moment mod
 XYZ_body = dcm*[x, y, z]';
@@ -56,15 +58,15 @@ tmp = sqrt(XYZ_body(1)^2+XYZ_body(2)^2+XYZ_body(3)^2);
 T_hat = -[XYZ_body(1)/tmp, XYZ_body(2)/tmp, XYZ_body(3)/tmp]';
 %T_hat = -normalize(XYZ_body, 'norm');
 
-tmp = sqrt(T_hat(1)^2+T_hat(2)^2+T_hat(3)^2);
-%T_inter_hat = [0, T_hat(2)/tmp, T_hat(3)/tmp]';
-T_inter_hat = normalize(T_hat.*[0, 1, 1]','norm');
+tmp = sqrt(T_hat(2)^2+T_hat(3)^2);
+T_inter_hat = [0, T_hat(2)/tmp, T_hat(3)/tmp]';
+% T_inter_hat = normalize(T_hat.*[0, 1, 1]','norm');
 y_hat = [0, 0, 1]';
 
-phi_rel = acos(dot(y_hat, T_inter_hat)).*sign(T_inter_hat(2));
+phi_rel = acos(dot(y_hat, T_inter_hat)).*(T_inter_hat(2)/abs(T_inter_hat(2)));
 %phi_rel = acos(dot(y_hat, T_inter_hat)).*normalize(T_inter_hat(2), 'norm');
 
-theta_rel = acos(dot(T_inter_hat, T_hat)).*-sign(T_hat(1));
+theta_rel = acos(dot(T_inter_hat, T_hat)).*-(T_hat(1)/abs(T_hat(1)));
 %theta_rel = acos(dot(T_inter_hat, T_hat)).*-normalize(T_hat(1), 'norm');
 delta_roll = roll_c-phi_rel;
 delta_pitch = pitch_c-theta_rel;
