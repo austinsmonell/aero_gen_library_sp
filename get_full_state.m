@@ -2,10 +2,10 @@ function x_dot = get_full_state(x_in, u_in, param)
 %%
 ac1_state = x_in(1:12);
 
-%  ctr1 = u_in(1:3);
+ctr1 = u_in(1:3);
 % ctr1 = [0, 0, u_in(3)];%u_in(1:3);
-ctr1 = [0, 0, 0];
-thr1 = u_in(4)*20;
+% ctr1 = [0, 0, 0];
+% thr1 = u_in(4)*20;
 
 
 %extract vars from state input
@@ -29,7 +29,7 @@ yaw_moment_1 = param(33); pitch_c = param(34);roll_c_1 = param(35);
 [F_out1, M_tot1, dcm1] = get_ac_forces_moments(ac1_state, ctr1, param, coeff,coeff_ctr, yaw_moment_1, pitch_c, roll_c_1);
 % [F_out1, M_tot1, dcm1] = get_ac_forces_moments(ac1_state, ctr1, param, coeff,coeff_ctr, yaw_moment_1, u_in(10)+pitch_c, u_in(9)+roll_c_1);
 % [F_out2, M_tot2, dcm2] = get_ac_forces_moments(ac2_state, ctr2, param, coeff,coeff_ctr, yaw_moment_2, u_in(12)+pitch_c, u_in(11)+roll_c_2);
-M_tot1 = M_tot1 + u_in(1:3)*20;
+% M_tot1 = M_tot1 + u_in(1:3)*20;
 
 %tension
 F_out1_inertial = inv(dcm1)*F_out1;
@@ -43,7 +43,7 @@ F_tot1 = dcm1*F_tot1_inertial;
 % F_tot1 = dcm1*F_tot1_inertial + u_in(1:3);
 
 %solve for output accelerations
-u_dot1 = F_tot1(1)/m+thr1; v_dot1 = F_tot1(2)/m; w_dot1 = F_tot1(3)/m;
+u_dot1 = F_tot1(1)/m; v_dot1 = F_tot1(2)/m; w_dot1 = F_tot1(3)/m;
 %p_dot1 = M_tot1(1)/moi_ac(1); q_dot1 = M_tot1(2)/moi_ac(2); r_dot1 = M_tot1(3)/moi_ac(3);
 
 %extract vars from state input
